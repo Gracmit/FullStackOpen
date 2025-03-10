@@ -18,6 +18,7 @@ const App = () => {
   )
 }
 
+
 const Button = ({ onClick, text }) => {
   return (
     <div>
@@ -25,6 +26,7 @@ const Button = ({ onClick, text }) => {
     </div>
   )
 }
+
 
 const Statisics = ({good, neutral, bad}) => {
 
@@ -36,24 +38,35 @@ const Statisics = ({good, neutral, bad}) => {
     return good / (good + neutral + bad) * 100;
   }
 
+  if(good + neutral + bad === 0){
+    return (
+      <div>
+        <h1>Statistics</h1>
+        <p>No feedback given</p>
+      </div>
+    )
+  }
+
   return (
     <div>
       <h1>Statistics</h1>
-      <Counter text="good" amount={good}></Counter>
-      <Counter text="neutral" amount={neutral}></Counter>
-      <Counter text="bad" amount={bad}></Counter>
-      <p>Average {calculateAvgScore()}</p>
-      <p>positive {calculatePositivePercent()}%</p>
+      <StatisticLine text="Good" amount={good}></StatisticLine>
+      <StatisticLine text="Neutral" amount={neutral}></StatisticLine>
+      <StatisticLine text="Bad" amount={bad}></StatisticLine>
+      <StatisticLine text="Average" amount={calculateAvgScore()}></StatisticLine>
+      <StatisticLine text="Positive" amount={calculatePositivePercent()}></StatisticLine>
     </div>
   )
 }
 
-const Counter = ({ text, amount }) => {
+
+const StatisticLine = ({ text, amount }) => {
   return (
     <>
       <p>{text} {amount}</p>
     </>
   )
 }
+
 
 export default App
