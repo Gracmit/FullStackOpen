@@ -19,23 +19,63 @@ const App = () => {
   }
 
   const addVote = () => {
-    const copy = {...votes};
+    const copy = [...votes];
     copy[selected]++;
     setVote(copy);
+
+    findAnecdoteWithMostVotes(copy)
   }
 
-  const [votes, setVote] = useState(generateEmptyVotes())
-   
-  const [selected, setSelected] = useState(0)
+  const findAnecdoteWithMostVotes = (copy) => {
+    console.log(copy);
+    let mostCurrentVotes = 0;
+    let mostVotesIndex = -1;
+    for (let i = 0; i < copy.length; i++){
+      if(copy[i] > mostCurrentVotes){
+        mostVotesIndex = i;
+        mostCurrentVotes = copy[i];
+      }
+    }
+
+    if(mostVotesIndex === -1){
+      return;
+    }
+    
+    console.log(mostVotesIndex);
+    setMostVotes(mostVotesIndex);
+  }
+
+
+  const setMostVotesText = () => {
+    if(mostVotes === -1){
+      return "No votes given";
+    }
+    return anecdotes[mostVotes];
+  }
+
+  const SetVotesText = () => {
+    if(mostVotes === -1){
+      return "";
+    }
+    return "Has " + votes[mostVotes] + " votes";
+  }
+
+  const [votes, setVote] = useState(generateEmptyVotes());
+  const [selected, setSelected] = useState(0);
+  const [mostVotes, setMostVotes] = useState(-1);
 
 
 
   return (
     <div>
-      <h1>{anecdotes[selected]}</h1>
+      <h1>Anecdote of the day</h1>
+      <p>{anecdotes[selected]}</p>
       <button onClick={() => setSelected(Math.floor(Math.random() * anecdotes.length))}>Next Anecdote</button>
       <button onClick={() => addVote()}>Vote</button>
       <p>has {votes[selected]} votes</p>
+      <h1>Anecdote with most votes</h1>
+      <p>{setMostVotesText()}</p>
+      <p>{SetVotesText()}</p>
     </div>
   )
 }
