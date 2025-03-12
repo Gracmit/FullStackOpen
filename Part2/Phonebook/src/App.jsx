@@ -3,17 +3,22 @@ import { useState } from 'react'
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas',
-      number: "04040404040"
+      number: "04040404040", 
+      id: 1
      }
   ])
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
+
+  const [personsToShow, setPersonsToShow] = useState(persons);
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [filter, SetFilter] = useState("");
 
   const addName = (event) => {
     event.preventDefault();
     const newPerson = {
       name: newName,
-      number: newNumber
+      number: newNumber,
+      id: persons.legth + 1
     }
 
     var sameName = persons.find((person) => person.name === newPerson.name);
@@ -22,8 +27,11 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
       return;
     }
-    setPersons(persons.concat(newPerson));
+    const newPersons = persons.concat(newPerson)
+    setPersons(newPersons);
     setNewName('');
+    setNewNumber("");
+    setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
   }
 
 
@@ -35,9 +43,17 @@ const App = () => {
     setNewNumber(event.target.value);
   }
 
+  const handleFilterChanged = (event) => {
+    SetFilter(event.target.value);
+    const toShow = persons.filter((person) => person.name.toUpperCase().includes(event.target.value.toUpperCase()));
+    setPersonsToShow(toShow);
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <input onChange={handleFilterChanged}></input>
+      <h2>Add a new</h2>
       <form onSubmit={addName}>
         <div>
           name: <input value={newName} onChange={handleNameChange} />
@@ -51,8 +67,8 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       {
-        persons.map(person => 
-          <p key={person.name}>{person.name} {person.number}</p>)
+        personsToShow.map(person => 
+          <p key={person.id}>{person.name} {person.number}</p>)
       }
     </div>
   )
