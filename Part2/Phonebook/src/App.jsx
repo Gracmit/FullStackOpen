@@ -1,17 +1,21 @@
 import { useState } from 'react'
+import Search from "./components/Search"
+import Filter from "./components/Filter"
+import Form  from './components/Form'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      number: "04040404040", 
+    {
+      name: 'Arto Hellas',
+      number: "04040404040",
       id: 1
-     }
+    }
   ])
 
   const [personsToShow, setPersonsToShow] = useState(persons);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
-  const [filter, SetFilter] = useState("");
+  const [filter, setFilter] = useState("");
 
   const addName = (event) => {
     event.preventDefault();
@@ -23,7 +27,7 @@ const App = () => {
 
     var sameName = persons.find((person) => person.name === newPerson.name);
 
-    if(sameName !== undefined){
+    if (sameName !== undefined) {
       alert(`${newName} is already added to phonebook`)
       return;
     }
@@ -44,34 +48,23 @@ const App = () => {
   }
 
   const handleFilterChanged = (event) => {
-    SetFilter(event.target.value);
+    setFilter(event.target.value);
     const toShow = persons.filter((person) => person.name.toUpperCase().includes(event.target.value.toUpperCase()));
     setPersonsToShow(toShow);
   }
 
   return (
     <div>
-      <h2>Phonebook</h2>
-      <input onChange={handleFilterChanged}></input>
-      <h2>Add a new</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {
-        personsToShow.map(person => 
-          <p key={person.id}>{person.name} {person.number}</p>)
-      }
+      <Filter onStateChange={handleFilterChanged}></Filter>
+      <Form onSubmit={addName} onNameChanged={handleNameChange}
+        onNumberChanged={handleNumberChange} name={newName} number={newNumber}></Form>
+      <Search show={personsToShow}></Search>
     </div>
   )
 }
+
+
+
+
 
 export default App
