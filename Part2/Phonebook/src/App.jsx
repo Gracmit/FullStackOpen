@@ -12,6 +12,12 @@ const App = () => {
       name: newName,
     }
 
+    var sameName = persons.find((person) => person.name === newPerson.name);
+
+    if(sameName !== undefined){
+      alert(`${newName} is already added to phonebook`)
+      return;
+    }
     setPersons(persons.concat(newPerson));
     setNewName('');
   }
