@@ -17,10 +17,14 @@ const Content = ({parts}) => {
   )
 }
 
-const Total = (props) => {
+const Total = ({parts}) => {
   return (
     <div>
-      <p>Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}</p>
+      <p>
+        Number of exercises {
+          parts.reduce((accumulator, currentValue) => accumulator + currentValue.exercises, 0,)
+        }
+      </p>
     </div>
   )
 }
@@ -58,7 +62,7 @@ const App = () => {
       },
       {
         name: 'Debugging',
-        exercises: 6,
+        exercises: 5,
         id: 4
       }
     ]
