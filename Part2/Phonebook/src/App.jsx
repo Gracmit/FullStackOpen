@@ -25,8 +25,7 @@ const App = () => {
     event.preventDefault();
     const newPerson = {
       name: newName,
-      number: newNumber,
-      id: persons.legth + 1
+      number: newNumber
     }
 
     var sameName = persons.find((person) => person.name === newPerson.name);
@@ -35,11 +34,17 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
       return;
     }
-    const newPersons = persons.concat(newPerson)
-    setPersons(newPersons);
-    setNewName('');
-    setNewNumber("");
-    setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
+
+    axios .post("http://localhost:3001/persons", newPerson)
+      .then(response => {
+        let newPersons  = persons.concat(response.data)
+        setPersons(newPerson);
+        setNewName('');
+        setNewNumber("");
+        setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
+      })
+
+    
   }
 
 
