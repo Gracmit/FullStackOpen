@@ -2,7 +2,7 @@ import { useState, useEffect} from 'react'
 import Search from "./components/Search"
 import Filter from "./components/Filter"
 import Form  from './components/Form'
-import axios from 'axios'
+import numberService from './services/numbers'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,12 +12,12 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {
-        setPersons(response.data)
-        console.log(response.data)
-        setPersonsToShow(response.data)
+
+    numberService
+      .getAll()
+      .then(initialNumbers => {
+        setPersons(initialNumbers)
+        setPersonsToShow(initialNumbers)
       })
   }, [])
 
@@ -35,16 +35,15 @@ const App = () => {
       return;
     }
 
-    axios .post("http://localhost:3001/persons", newPerson)
-      .then(response => {
-        let newPersons  = persons.concat(response.data)
+    numberService
+      .create(newPerson)
+      .then(returnedList =>{
+        let newPersons = persons.concat(returnedList)
         setPersons(newPerson);
         setNewName('');
         setNewNumber("");
         setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
       })
-
-    
   }
 
 
