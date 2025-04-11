@@ -2,7 +2,9 @@ import { useState, useEffect} from 'react'
 import Search from "./components/Search"
 import Filter from "./components/Filter"
 import Form  from './components/Form'
+import Notification  from './components/Notification'
 import numberService from './services/numbers'
+
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -10,6 +12,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState(null)
 
   useEffect(() => {
 
@@ -41,6 +44,10 @@ const App = () => {
           setNewName('');
           setNewNumber("");
           setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
+          setNotificationMessage(`${newName} was updated`)
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 3000)
         })
       }
       return;
@@ -54,6 +61,10 @@ const App = () => {
         setNewName('');
         setNewNumber("");
         setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
+        setNotificationMessage(`${newName} was added to phonebook`)
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 3000)
       })
   }
 
@@ -87,6 +98,7 @@ const App = () => {
   return (
     <div>
       <Filter onStateChange={handleFilterChanged}></Filter>
+      <Notification message={notificationMessage}></Notification>
       <Form onSubmit={addName} onNameChanged={handleNameChange}
         onNumberChanged={handleNumberChange} name={newName} number={newNumber}></Form>
       <Search show={personsToShow} onDelete={handleDeleteButton}></Search>
