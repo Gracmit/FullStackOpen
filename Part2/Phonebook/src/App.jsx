@@ -28,10 +28,21 @@ const App = () => {
       number: newNumber
     }
 
-    var sameName = persons.find((person) => person.name === newPerson.name);
+    var samePerson = persons.find((person) => person.name === newPerson.name);
 
-    if (sameName !== undefined) {
-      alert(`${newName} is already added to phonebook`)
+    if (samePerson !== undefined) {
+      if(confirm(`${newName} is already added to phonebook, replace the old number with a new one?`))
+      {
+        numberService
+        .update(samePerson.id, newPerson)
+        .then(returnedObject => {
+          let newPersons = persons.toSpliced(persons.indexOf(samePerson), 1, returnedObject)
+          setPersons(newPersons)
+          setNewName('');
+          setNewNumber("");
+          setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
+        })
+      }
       return;
     }
 
