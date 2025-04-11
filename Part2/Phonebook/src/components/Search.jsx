@@ -3,8 +3,12 @@ const Search = (props) => {
       <div>
         <h2>Numbers</h2>
         {
-          props.show.map(person =>
-            <p key={person.id}>{person.name} {person.number}</p>)
+          props.show.map(person => {
+            return <div key={person.id}>
+              {person.name} {person.number}
+              <button name={person.name} id={person.id} onClick={props.onDelete}>Delete</button>
+            </div>
+          })
         }
       </div>
     )

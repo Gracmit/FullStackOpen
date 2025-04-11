@@ -39,7 +39,7 @@ const App = () => {
       .create(newPerson)
       .then(returnedList =>{
         let newPersons = persons.concat(returnedList)
-        setPersons(newPerson);
+        setPersons(newPersons);
         setNewName('');
         setNewNumber("");
         setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
@@ -61,12 +61,24 @@ const App = () => {
     setPersonsToShow(toShow);
   }
 
+  const handleDeleteButton = (event) => {
+      if(confirm("delete " + event.target.name + "?")){
+        numberService
+          .deleteNumber(event.target.id)
+          .then(deletedNumber => {
+            let newPersons = persons.toSpliced(persons.indexOf(deletedNumber), 1)
+            setPersons(newPersons)
+            setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
+          })
+      }
+  }
+
   return (
     <div>
       <Filter onStateChange={handleFilterChanged}></Filter>
       <Form onSubmit={addName} onNameChanged={handleNameChange}
         onNumberChanged={handleNumberChange} name={newName} number={newNumber}></Form>
-      <Search show={personsToShow}></Search>
+      <Search show={personsToShow} onDelete={handleDeleteButton}></Search>
     </div>
   )
 }
