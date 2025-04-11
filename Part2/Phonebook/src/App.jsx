@@ -12,16 +12,11 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState("");
-  const [notificationMessage, setNotificationMessage] = useState(null)
+  // notification message will be array with first elemnt being the message and the second being boolean for checking is it error or normal notification
+  const [notificationMessage, setNotificationMessage] = useState([null, false])
 
   useEffect(() => {
-
-    numberService
-      .getAll()
-      .then(initialNumbers => {
-        setPersons(initialNumbers)
-        setPersonsToShow(initialNumbers)
-      })
+    fetchPhonebook()
   }, [])
 
   const addName = (event) => {
@@ -44,9 +39,21 @@ const App = () => {
           setNewName('');
           setNewNumber("");
           setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
-          setNotificationMessage(`${newName} was updated`)
+          setNotificationMessage([`${newName} was updated`, false])
           setTimeout(() => {
-            setNotificationMessage(null)
+            setNotificationMessage([null, false])
+          }, 3000)
+        })
+        .catch(error => {
+          setNotificationMessage([`Error: ${newName} was already deleted from the server`, true])
+
+          var deletedPerson = persons.find((person) => person.id === event.target.id)
+          let newPersons = persons.toSpliced(persons.indexOf(deletedPerson), 1)
+          setPersons(newPersons)
+          setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
+
+          setTimeout(() => {
+            setNotificationMessage([null, false])
           }, 3000)
         })
       }
@@ -61,9 +68,9 @@ const App = () => {
         setNewName('');
         setNewNumber("");
         setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
-        setNotificationMessage(`${newName} was added to phonebook`)
+        setNotificationMessage([`${newName} was added to phonebook`, false])
         setTimeout(() => {
-          setNotificationMessage(null)
+          setNotificationMessage([null, false])
         }, 3000)
       })
   }
@@ -92,13 +99,34 @@ const App = () => {
             setPersons(newPersons)
             setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
           })
+          .catch(error => {
+            setNotificationMessage([`Error: ${newName} was already deleted from the server`, true])
+
+            var deletedPerson = persons.find((person) => person.id === event.target.id)
+            let newPersons = persons.toSpliced(persons.indexOf(deletedPerson), 1)
+            setPersons(newPersons)
+            setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
+
+            setTimeout(() => {
+              setNotificationMessage([null, false])
+            }, 3000)
+          })
       }
+  }
+
+  const fetchPhonebook = () => {
+    numberService
+    .getAll()
+    .then(initialNumbers => {
+      setPersons(initialNumbers)
+      setPersonsToShow(initialNumbers)
+    })
   }
 
   return (
     <div>
       <Filter onStateChange={handleFilterChanged}></Filter>
-      <Notification message={notificationMessage}></Notification>
+      <Notification message={notificationMessage[0]} error={notificationMessage[1]}></Notification>
       <Form onSubmit={addName} onNameChanged={handleNameChange}
         onNumberChanged={handleNumberChange} name={newName} number={newNumber}></Form>
       <Search show={personsToShow} onDelete={handleDeleteButton}></Search>
