@@ -9,7 +9,7 @@ function App() {
   const [foundCountry, setFoundCountry] = useState(null);
   const [weather, setWeather] = useState(null);
 
-  const api = "5b147c73c0cc24cda86078644c6cd7d7"
+  const api = import.meta.env.VITE_WEATHER_KEY
 
 
   useEffect(() => {
