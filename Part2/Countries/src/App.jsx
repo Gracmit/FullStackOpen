@@ -33,11 +33,21 @@ function App() {
     }
   }
 
+  const showCountry = (event) =>{
+    setFilter(event.target.value)
+
+    axios 
+    .get(`https://studies.cs.helsinki.fi/restcountries/api/name/${event.target.value}`)
+    .then(response => {
+      setFoundCountry(response.data)
+    })
+  }
+
   return (
     <div>
       Search countries{" "}
       <input type="text" value={filter} onChange={handleFilterChanged} />
-      <CountryList results={results} foundCountry={foundCountry}></CountryList>
+      <CountryList results={results} foundCountry={foundCountry} onButtonPress={showCountry}></CountryList>
     </div>
   )
 }

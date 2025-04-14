@@ -1,8 +1,4 @@
-const CountryList = ({ results, foundCountry }) => {
-
-
-
-
+const CountryList = ({ results, foundCountry, onButtonPress}) => {
     if (results.length > 10) {
         return (
             <p>Too many matches, specify another filter</p>
@@ -36,7 +32,9 @@ const CountryList = ({ results, foundCountry }) => {
     return (
         <ul>
             {results.map((country) => (
-                <li key={country}>{country}</li>
+                <li key={country}>{country + " "}
+                    <button onClick={onButtonPress} value={country}>Show</button>
+                </li>
             ))}
         </ul>
     )
