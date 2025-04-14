@@ -1,4 +1,4 @@
-const CountryList = ({ results, foundCountry, onButtonPress}) => {
+const CountryList = ({ results, foundCountry, onButtonPress, weather}) => {
     if (results.length > 10) {
         return (
             <p>Too many matches, specify another filter</p>
@@ -11,7 +11,7 @@ const CountryList = ({ results, foundCountry, onButtonPress}) => {
         )
     }
 
-    if (foundCountry) {
+    if (foundCountry !== null && weather !== null) {
         return (
             <div>
                 <h1>{foundCountry.name.common}</h1>
@@ -24,7 +24,10 @@ const CountryList = ({ results, foundCountry, onButtonPress}) => {
                     ))}
                 </ul>
                 <img src={foundCountry.flags.png} alt={foundCountry.flags.alt} />
-
+                <h2>Weather in {foundCountry.capital}</h2>
+                <p>Temperature: {weather.main.temp} Celsius</p>
+                <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt={weather.weather[0].description} />
+                <p>Wind: {weather.wind.speed} m/s</p>
             </div>
         )
     }
