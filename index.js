@@ -3,6 +3,7 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
+const person = require('./models/person')
 const app = express()
 
 app.use(express.static('dist'))
@@ -25,33 +26,26 @@ app.use(morgan(function (tokens, req, res) {
 
 app.use(cors())
 
-let persons = [
-    {
-        "id": "1",
-        "name": "Arto Hellas",
-        "number": "040-123456"
-    },
-    {
-        "id": "2",
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523"
-    },
-    {
-        "id": "3",
-        "name": "Dan Abramov",
-        "number": "12-43-234345"
-    },
-    {
-        "id": "4",
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122"
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
     }
-]
+
+    next(error)
+}
+
+app.use(errorHandler)
+
 
 app.get('/info', (request, response) => {
-    response.send(
-        `<p>Phonebook has info for ${persons.length} people</p>` +
-        `<p>${new Date().toString()}</p>`)
+    Person.find({}).then(result => {
+        response.send(
+            `<p>Phonebook has info for ${result.length} people</p>` +
+            `<p>${new Date().toString()}</p>`)
+    })
 })
 
 app.get('/api/persons', (request, response) => {
@@ -60,26 +54,26 @@ app.get('/api/persons', (request, response) => {
     })
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
     Person.findById(id).then(result => {
-        if(result){
+        if (result) {
             response.json(result)
         } else {
             response.status(404).end()
         }
     })
-    .catch(error => {
-        console.log(error)
-        response.status(500).end()
-    })
+        .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
-    persons = persons.filter(person => person.id !== id)
+    Person.findByIdAndDelete(id)
+        .then(result => {
+            response.status(204).end()
+        })
+        .catch(error => next(error))
 
-    response.status(204).end()
 })
 
 
@@ -92,12 +86,6 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    // if (persons.find(person => person.name === body.name)) {
-    //     return response.status(400).json({
-    //         error: 'persons name must be unique'
-    //     })
-    // }
-
     const person = new Person({
         name: body.name,
         number: body.number
@@ -106,6 +94,26 @@ app.post('/api/persons', (request, response) => {
     person.save().then(result => {
         response.json(result)
     })
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+    const id = request.params.id
+
+    Person.findById(id)
+        .then(result => {
+            if (!result) {
+                return response.status(404).end()
+            }
+
+            result.name = request.body.name
+            result.number = request.body.number
+
+            return result.save().then(updatedResult => {
+                response.json(updatedResult)
+            })
+        })
+        .catch(error => next(error))
+
 })
 
 
