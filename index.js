@@ -62,13 +62,17 @@ app.get('/api/persons', (request, response) => {
 
 app.get('/api/persons/:id', (request, response) => {
     const id = request.params.id
-    const person = persons.find(person => person.id === id)
-
-    if (person) {
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
+    Person.findById(id).then(result => {
+        if(result){
+            response.json(result)
+        } else {
+            response.status(404).end()
+        }
+    })
+    .catch(error => {
+        console.log(error)
+        response.status(500).end()
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -88,21 +92,20 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-    if (persons.find(person => person.name === body.name)) {
-        return response.status(400).json({
-            error: 'persons name must be unique'
-        })
-    }
+    // if (persons.find(person => person.name === body.name)) {
+    //     return response.status(400).json({
+    //         error: 'persons name must be unique'
+    //     })
+    // }
 
-    const person = {
+    const person = new Person({
         name: body.name,
-        number: body.number,
-        id: Math.floor(Math.random() * 10000)
-    }
+        number: body.number
+    })
 
-    persons = persons.concat(person)
-
-    response.json(person)
+    person.save().then(result => {
+        response.json(result)
+    })
 })
 
 
