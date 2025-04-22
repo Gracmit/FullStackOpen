@@ -1,1 +1,1 @@
-Link to the online application: https://fullstackopen-gkeg.onrender.com/info
+Link to the online application: https://fullstackopen-gkeg.onrender.com/
