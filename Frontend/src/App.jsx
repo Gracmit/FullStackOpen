@@ -45,7 +45,7 @@ const App = () => {
           }, 3000)
         })
         .catch(error => {
-          setNotificationMessage([`Error: ${newName} was already deleted from the server`, true])
+          setNotificationMessage([error.response.data.error, true])
 
           var deletedPerson = persons.find((person) => person.id === event.target.id)
           let newPersons = persons.toSpliced(persons.indexOf(deletedPerson), 1)
@@ -69,6 +69,13 @@ const App = () => {
         setNewNumber("");
         setPersonsToShow(newPersons.filter((person) => person.name.toUpperCase().includes(filter.toUpperCase())))
         setNotificationMessage([`${newName} was added to phonebook`, false])
+        setTimeout(() => {
+          setNotificationMessage([null, false])
+        }, 3000)
+      })
+      .catch(error => {
+        setNotificationMessage([error.response.data.error, true])
+
         setTimeout(() => {
           setNotificationMessage([null, false])
         }, 3000)
