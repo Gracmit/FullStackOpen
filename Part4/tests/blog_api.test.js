@@ -5,6 +5,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
 const Helper = require('./test_helper')
+const { blob } = require('node:stream/consumers')
 
 const api = supertest(app)
 
@@ -93,6 +94,22 @@ test('If url is missing', async () => {
     .post('/api/blogs')
     .send(blog)
     .expect(400)
+})
+
+test('Delete blog', async () => {
+    blogsAtStart = await Helper.blogsInDb()  
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+      const blogsAtEnd = await Helper.blogsInDb()
+
+      const titles = blogsAtEnd.map(b => b.title)
+      assert(!titles.includes(blogToDelete.title))
+
+      assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
 })
 
 after(async () => {
