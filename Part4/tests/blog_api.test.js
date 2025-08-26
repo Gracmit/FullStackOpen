@@ -50,6 +50,24 @@ test('Blog gets added to database', async () => {
   assert(contents.includes('http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions2.htmll'))
 })
 
+test('If likes are missing', async () => {
+  const blog =
+  {
+    title: 'First class tests 3',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions3.htmll',
+  }
+
+
+  await api
+    .post('/api/blogs')
+    .send(blog)
+    .expect(201)
+
+  const response = await api.get('/api/blogs')
+  assert.strictEqual(response.body[response.body.length - 1].likes, 0)
+})
+
 
 after(async () => {
   await mongoose.connection.close()
