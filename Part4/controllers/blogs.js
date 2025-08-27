@@ -1,9 +1,11 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const middleware = require('../utils/middleware')
+
 
 
 blogsRouter.get('/', async (request, response) => {
-    const blogs = await Blog.find({})
+    const blogs = await Blog.find({}).populate('user', {notes: 0})
     if (blogs) {
         response.json(blogs)
     }
@@ -13,7 +15,7 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.get('/:id', async (request, response) => {
-    const blog = await Blog.findById(request.params.id)
+    const blog = await Blog.findById(request.params.id).populate('user', {notes: 0})
     if (blog) {
         response.status(200).json(blog)
     }
@@ -23,21 +25,39 @@ blogsRouter.get('/:id', async (request, response) => {
 })
 
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     const blog = new Blog(request.body)
+    
+
+    if (!request.user) {
+    response.status(400).json({ error: 'UserId missing or not valid' })
+    return
+  }
+
 
     if (blog.title === undefined || blog.url === undefined) {
-        response.status(400).end()
+        response.status(400).json({ error: 'blog title or url missing' })
     }
     else {
+
+        blog.user = request.user.id
+
         const savedBlog = await blog.save()
         response.status(201).json(savedBlog)
     }
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
-    await Blog.findByIdAndDelete(request.params.id)
-    response.status(204).end()
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
+
+    const blogToDelete = await Blog.findById(request.params.id)
+
+    if(blogToDelete.user.toString() === request.user.id.toString()){
+        await Blog.findByIdAndDelete(request.params.id)
+        response.status(204).end()
+    }
+    else{
+        response.status(403).json({error: "Forbidden to delete other users blog"})
+    }
 })
 
 blogsRouter.put('/:id', async (request, response) => {
