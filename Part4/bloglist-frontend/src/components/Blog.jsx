@@ -35,7 +35,7 @@ const Blog = ({ blog, handleLike, deleteBlog, showDelete }) => {
       <div style={showWhenVisible}>
         <p>{blog.url}</p>
         <div>
-          {blog.likes} likes {" "}
+          {blog.likes} likes {' '}
           <button onClick={handleLikeEvent}>like</button>
         </div>
         <p>{blog.user.name}</p>

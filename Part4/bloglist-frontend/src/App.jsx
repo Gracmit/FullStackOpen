@@ -16,7 +16,7 @@ const App = () => {
   const blogRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>{
+    blogService.getAll().then(blogs => {
       sortAndSetBlogs(blogs)
     })
 
@@ -27,7 +27,7 @@ const App = () => {
 
   const handleLogIn = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginService.login({ username, password })
       setUser(user)
@@ -73,7 +73,7 @@ const App = () => {
     })
   }
 
-  const handleLike = (newObject) =>{
+  const handleLike = (newObject) => {
     blogService.update(newObject.id, newObject).then(returnedBlog => {
       sortAndSetBlogs(blogs.map(blog => blog.id === returnedBlog.id ? returnedBlog : blog))
     })
@@ -84,9 +84,9 @@ const App = () => {
   }
 
   const handleDelete = (id) => {
-      blogService.deleteBlog(id).then(() => {
-        sortAndSetBlogs(blogs.filter(blog => blog.id !== id))
-      })
+    blogService.deleteBlog(id).then(() => {
+      sortAndSetBlogs(blogs.filter(blog => blog.id !== id))
+    })
   }
 
   if (!user) {
