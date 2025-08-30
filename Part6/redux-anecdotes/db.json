@@ -1,0 +1,24 @@
+{
+  "anecdotes": [
+    {
+      "id": "0de5",
+      "content": "Makkara on hyvää",
+      "votes": 18
+    },
+    {
+      "id": "5dee",
+      "content": "TikTok ei ole hyvästä",
+      "votes": 7
+    },
+    {
+      "id": "c432",
+      "content": "skjddjdhf",
+      "votes": 1
+    },
+    {
+      "id": "0415",
+      "content": ".kjhkjhjjkh",
+      "votes": 2
+    }
+  ]
+}
